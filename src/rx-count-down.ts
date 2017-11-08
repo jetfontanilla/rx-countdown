@@ -72,7 +72,6 @@ export class RxCountDown {
     }
 
     protected setExpired(): void {
-        this.remainingTime = "";
         this.expired = true;
     }
 
