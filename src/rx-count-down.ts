@@ -9,15 +9,15 @@ import "rxjs/add/operator/finally";
 import "rxjs/add/operator/takeUntil";
 
 export class RxCountDown {
-    private remainingTime: string = "";
-    private timerObservable: Observable<number>;
-    private onCompleteFn: () => void;
-    private expired: boolean = false;
+    protected remainingTime: string = "";
+    protected timerObservable: Observable<number>;
+    protected onCompleteFn: () => void;
+    protected expired: boolean = false;
 
-    constructor(private durationMs: number = 0,
-                private endDate: string = "",
-                private intervalMs: number = 1000,
-                private format: string = "mm:ss") {
+    constructor(protected durationMs: number = 0,
+                protected endDate: string = "",
+                protected intervalMs: number = 1000,
+                protected format: string = "mm:ss") {
 
         this.tick();
         if (this.isExpired()) {
@@ -35,13 +35,13 @@ export class RxCountDown {
             });
     }
 
-    private generateTimerObservable(): Observable<number> {
+    protected generateTimerObservable(): Observable<number> {
         let remainingTimeMs = this.computeRemainingTimeMs(this.endDate, this.durationMs);
         return Observable.interval(this.intervalMs)
             .takeUntil(Observable.timer(remainingTimeMs));
     }
 
-    private tick(): void {
+    protected tick(): void {
         let remainingTimeMs = this.computeRemainingTimeMs(this.endDate, this.durationMs);
         this.remainingTime = this.computeRemainingTimeString(remainingTimeMs);
 
@@ -50,28 +50,28 @@ export class RxCountDown {
         }
     }
 
-    private complete(): void {
+    protected complete(): void {
         if (this.onCompleteFn) {
             this.onCompleteFn();
         }
         this.setExpired();
     }
 
-    private computeRemainingTimeString(remainingTimeMs: number): string {
+    protected computeRemainingTimeString(remainingTimeMs: number): string {
         if (remainingTimeMs <= 0) {
             return "";
         }
         return moment(remainingTimeMs).format(this.format);
     }
 
-    private computeRemainingTimeMs(targetDate: string, durationMs: number): number {
+    protected computeRemainingTimeMs(targetDate: string, durationMs: number): number {
         if (!targetDate && !durationMs) {
             return 0;
         }
         return moment(targetDate).valueOf() - moment().valueOf() + durationMs;
     }
 
-    private setExpired(): void {
+    protected setExpired(): void {
         this.expired = true;
     }
 
