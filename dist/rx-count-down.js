@@ -66,6 +66,7 @@ var RxCountDown = (function () {
         return moment(targetDate).valueOf() - moment().valueOf() + durationMs;
     };
     RxCountDown.prototype.setExpired = function () {
+        this.remainingTime = "";
         this.expired = true;
     };
     RxCountDown.prototype.onComplete = function (onCompleteFn) {
@@ -88,4 +89,5 @@ var RxCountDown = (function () {
     return RxCountDown;
 }());
 exports.RxCountDown = RxCountDown;
+exports.default = RxCountDown;
 //# sourceMappingURL=rx-count-down.js.map

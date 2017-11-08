@@ -99,3 +99,5 @@ export class RxCountDown {
             .subscribe(next, error, complete);
     }
 }
+
+export default RxCountDown;
