@@ -3,6 +3,7 @@ import "rxjs/add/observable/interval";
 import "rxjs/add/observable/timer";
 import "rxjs/add/observable/never";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/finally";
 import "rxjs/add/operator/takeUntil";
 export declare class RxCountDown {
     private durationMs;
@@ -16,6 +17,7 @@ export declare class RxCountDown {
     constructor(durationMs?: number, endDate?: string, intervalMs?: number, format?: string);
     private generateTimerObservable();
     private tick();
+    private complete();
     private computeRemainingTimeString(remainingTimeMs);
     private computeRemainingTimeMs(targetDate, durationMs);
     private setExpired();

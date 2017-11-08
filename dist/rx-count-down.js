@@ -6,6 +6,7 @@ require("rxjs/add/observable/interval");
 require("rxjs/add/observable/timer");
 require("rxjs/add/observable/never");
 require("rxjs/add/operator/map");
+require("rxjs/add/operator/finally");
 require("rxjs/add/operator/takeUntil");
 var RxCountDown = (function () {
     function RxCountDown(durationMs, endDate, intervalMs, format) {
@@ -26,7 +27,11 @@ var RxCountDown = (function () {
             return;
         }
         this.timerObservable = this.generateTimerObservable();
-        this.timerObservable.subscribe(function () {
+        this.timerObservable
+            .finally(function () {
+            _this.complete();
+        })
+            .subscribe(function () {
             _this.tick();
         });
     }
@@ -39,11 +44,14 @@ var RxCountDown = (function () {
         var remainingTimeMs = this.computeRemainingTimeMs(this.endDate, this.durationMs);
         this.remainingTime = this.computeRemainingTimeString(remainingTimeMs);
         if (remainingTimeMs <= 0) {
-            if (this.onCompleteFn) {
-                this.onCompleteFn();
-            }
-            this.setExpired();
+            this.complete();
         }
+    };
+    RxCountDown.prototype.complete = function () {
+        if (this.onCompleteFn) {
+            this.onCompleteFn();
+        }
+        this.setExpired();
     };
     RxCountDown.prototype.computeRemainingTimeString = function (remainingTimeMs) {
         if (remainingTimeMs <= 0) {

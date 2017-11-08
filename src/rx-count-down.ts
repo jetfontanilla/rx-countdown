@@ -5,6 +5,7 @@ import "rxjs/add/observable/interval";
 import "rxjs/add/observable/timer";
 import "rxjs/add/observable/never";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/finally";
 import "rxjs/add/operator/takeUntil";
 
 export class RxCountDown {
@@ -25,9 +26,13 @@ export class RxCountDown {
         }
 
         this.timerObservable = this.generateTimerObservable();
-        this.timerObservable.subscribe(() => {
-            this.tick();
-        });
+        this.timerObservable
+            .finally(() => {
+                this.complete();
+            })
+            .subscribe(() => {
+                this.tick();
+            });
     }
 
     private generateTimerObservable(): Observable<number> {
@@ -41,11 +46,15 @@ export class RxCountDown {
         this.remainingTime = this.computeRemainingTimeString(remainingTimeMs);
 
         if (remainingTimeMs <= 0) {
-            if (this.onCompleteFn) {
-                this.onCompleteFn();
-            }
-            this.setExpired();
+            this.complete();
         }
+    }
+
+    private complete(): void {
+        if (this.onCompleteFn) {
+            this.onCompleteFn();
+        }
+        this.setExpired();
     }
 
     private computeRemainingTimeString(remainingTimeMs: number): string {
